@@ -6,7 +6,7 @@ const moment = require("moment");
 const  path = require("path");
 const fs = require("fs");
 
-const utils = require("utils/utils");
+const utils = require("./utils/utils");
 
 sequelize.sync({
 
