@@ -1,0 +1,22 @@
+{
+  "name": "simprovisioning",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "easy-soap-request": "^4.1.1",
+    "fast-xml-parser": "^3.17.6",
+    "he": "^1.2.0",
+    "line-reader": "^0.4.0",
+    "moment": "^2.29.1",
+    "move-file": "^2.0.0",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.3.5"
+  }
+}
