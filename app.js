@@ -9,6 +9,7 @@ const fs = require("fs");
 const utils = require("./utils/utils");
 
 sequelize.sync({
+    logging:false
 
 }).then(() =>{
     console.log("Sequelize Connected");
@@ -28,7 +29,7 @@ sequelize.sync({
                 let imei = lineArray[3];
                 let deviceType = lineArray[4];
 
-                let profileID = imsi.substring(8);
+                let profileID = `1-${imsi.substring(8)}`;
                 try {
                     if (await utils.create_Hss_Auc(imsi,authKeys)){
                         process.stdout.write(`${msisdn} created on HSS_Auc`)
@@ -47,27 +48,27 @@ sequelize.sync({
 
 
                                     }else {
-                                        console.log(`${msisdn} failed to update AccountId on IN. Exiting...`);
+                                        console.log(`\n ${msisdn} failed to update AccountId on IN. Exiting...`);
                                         process.exit(1)
 
                                     }
                                 }else {
-                                    console.log(`${msisdn} failed to create on IN. Exiting...`);
+                                    console.log(`\n${msisdn} failed to create on IN. Exiting...`);
                                     process.exit(1)
 
                                 }
                             }else {
-                                console.log(`${msisdn} failed to create on PCRF. Exiting...`);
+                                console.log(`\n${msisdn} failed to create on PCRF. Exiting...`);
                                 process.exit(1)
 
                             }
                         }else {
-                            console.log(`${msisdn} failed to create on HSS_Sub. Exiting...`);
+                            console.log(`\n${msisdn} failed to create on HSS_Sub. Exiting...`);
                             process.exit(1)
 
                         }
                     }else {
-                        console.log(`${msisdn} failed to create on HSS_Auc. Exiting...`);
+                        console.log(`\n${msisdn} failed to create on HSS_Auc. Exiting...`);
                         process.exit(1)
                     }
 

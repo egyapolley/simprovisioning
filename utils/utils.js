@@ -64,13 +64,27 @@ async function create_Hss_Auc(imsi, authKeys) {
       </bd:createMO>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>`;
+    try {
 
-    const {response} = await soapRequest({url: URL, headers: sampleHeaders, xml: xmlRequest, timeout: 6000}); // Optional timeout parameter(milliseconds)
-    const {body} = response;
-    let jsonObj = parser.parse(body, options);
-    let result = jsonObj.Envelope.Body;
+        const {response} = await soapRequest({url: URL, headers: sampleHeaders, xml: xmlRequest, timeout: 6000}); // Optional timeout parameter(milliseconds)
+        const {body} = response;
+        let jsonObj = parser.parse(body, options);
+        let result = jsonObj.Envelope.Body;
 
-    return  !!(result.createMOResponse && result.createMOResponse.mO && result.createMOResponse.mO.moiLocation);
+        return  !!(result.createMOResponse && result.createMOResponse.mO && result.createMOResponse.mO.moiLocation);
+
+    }catch (error){
+        let jsonObj = parser.parse(error.toString(), options);
+        let result = jsonObj.Envelope.Body;
+        if (result.Fault.detail.createMOFault.createMOFault.toString().includes("Error ErrorId=\"2\"")){
+           return true;
+        }else {
+            throw error
+        }
+
+
+    }
+
 
 
 }
@@ -89,10 +103,10 @@ async function create_Hss_Sub(msisdn, profileID,imsi) {
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:bd="http://www.3gpp.org/ftp/Specs/archive/32_series/32607/schema/32607-700/BasicCMIRPData" xmlns:bs="http://www.3gpp.org/ftp/Specs/archive/32_series/32607/schema/32607-700/BasicCMIRPSystem" xmlns:gd="http://www.3gpp.org/ftp/Specs/archive/32_series/32317/schema/32317-700/GenericIRPData" xmlns:mO="http://www.alcatel-lucent.com/soap_cm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <SOAP-ENV:Body>
       <bd:createMO>
-         <mOIElementLoc>gsmServiceProfileId=1,suMSubscriptionProfileId=1,suMSubscriberProfileId=1-${profileID},subscriptionFunctionId=1,managedElementId=HSS1</mOIElementLoc>
+         <mOIElementLoc>gsmServiceProfileId=1,suMSubscriptionProfileId=1,suMSubscriberProfileId=${profileID},subscriptionFunctionId=1,managedElementId=HSS1</mOIElementLoc>
          <referenceObjectInstance />
          <mO>
-            <moiLocation>gsmServiceProfileId=1,suMSubscriptionProfileId=1,suMSubscriberProfileId=1-${profileID},subscriptionFunctionId=1,managedElementId=HSS1</moiLocation>
+            <moiLocation>gsmServiceProfileId=1,suMSubscriptionProfileId=1,suMSubscriberProfileId=${profileID},subscriptionFunctionId=1,managedElementId=HSS1</moiLocation>
             <mO:moAttributeList>
                <mO:moAttribute>
                   <mO:name>mSubIdentificationNumberId</mO:name>
@@ -157,12 +171,27 @@ async function create_Hss_Sub(msisdn, profileID,imsi) {
 </SOAP-ENV:Envelope>
 `;
 
-    const {response} = await soapRequest({url: URL, headers: sampleHeaders, xml: xmlRequest, timeout: 6000}); // Optional timeout parameter(milliseconds)
-    const {body} = response;
-    let jsonObj = parser.parse(body, options);
-    let result = jsonObj.Envelope.Body;
+    try {
+        const {response} = await soapRequest({url: URL, headers: sampleHeaders, xml: xmlRequest, timeout: 6000}); // Optional timeout parameter(milliseconds)
+        const {body} = response;
+        let jsonObj = parser.parse(body, options);
+        let result = jsonObj.Envelope.Body;
 
-    return  !!(result.createMOResponse && result.createMOResponse.mO && result.createMOResponse.mO.moiLocation);
+        return  !!(result.createMOResponse && result.createMOResponse.mO && result.createMOResponse.mO.moiLocation);
+
+
+    }catch (error) {
+        let jsonObj = parser.parse(error.toString(), options);
+        let result = jsonObj.Envelope.Body;
+        if (result.Fault.detail.createMOFault.createMOFault.toString().includes("Error ErrorId=\"2\"")){
+            return true;
+        }else {
+            throw error
+        }
+
+
+    }
+
 
 
 }
@@ -185,10 +214,10 @@ async function create_Pcrf(msisdn, profileID,imsi) {
    <soapenv:Body>
       <sub:addAccount>
          <sub:account>
-            <sub:accountId>1-${profileID}</sub:accountId>
+            <sub:accountId>${profileID}</sub:accountId>
             <sub:subscribers>
                <sub:subscriber>
-                  <sub:userId>1-${profileID}</sub:userId>
+                  <sub:userId>${profileID}</sub:userId>
                   <sub:category>Silver</sub:category>
                   <sub:description />
                   <sub:state>ENABLED</sub:state>
@@ -238,13 +267,27 @@ async function create_Pcrf(msisdn, profileID,imsi) {
       </sub:addAccount>
    </soapenv:Body>
 </soapenv:Envelope>`;
+    try {
+        const {response} = await soapRequest({url: URL, headers: sampleHeaders, xml: xmlRequest, timeout: 6000}); // Optional timeout parameter(milliseconds)
+        const {body} = response;
+        let jsonObj = parser.parse(body, options);
+        let result = jsonObj.Envelope.Body;
 
-    const {response} = await soapRequest({url: URL, headers: sampleHeaders, xml: xmlRequest, timeout: 6000}); // Optional timeout parameter(milliseconds)
-    const {body} = response;
-    let jsonObj = parser.parse(body, options);
-    let result = jsonObj.Envelope.Body;
+        return  !result.addAccountResponse;
 
-    return  !!(result.addAccountResponse);
+    }catch (error) {
+        let jsonObj = parser.parse(error.toString(), options);
+        let result = jsonObj.Envelope.Body;
+        if (result.Fault && result.Fault.faultstring && result.Fault.faultstring.toString().includes("already exists") ){
+            return true;
+        }else {
+            throw error;
+        }
+
+
+    }
+
+
 
 
 }
@@ -279,8 +322,13 @@ async function create_IN(msisdn) {
     const {body} = response;
     let jsonObj = parser.parse(body, options);
     let result = jsonObj.Envelope.Body;
-
-    return  !!(result.CCSCD1_ADDResponse && result.CCSCD1_ADDResponse.ACCOUNT_NUMBER);
+    if (result.CCSCD1_ADDResponse && result.CCSCD1_ADDResponse.ACCOUNT_NUMBER){
+        return true
+    }else if (result.Fault && result.Fault.faultstring.toString().includes("already exists")){
+      return true;
+    }else {
+        throw new Error(result.Fault.faultstring.toString())
+    }
 
 
 }
