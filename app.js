@@ -19,6 +19,7 @@ sequelize.sync({
     fs.readFile(fileInput, async (err, data) => {
         if (err) throw err;
         const dataArray = data.toString().split("\n");
+        let total_provisioned =0;
         for (const line of dataArray) {
             if (line){
 
@@ -43,6 +44,7 @@ sequelize.sync({
                                        const provisioned_sim= await ProvisionSims.create({msisdn,imsi, authKeys,profileID,fileName:fileInput,deviceType,imei});
                                        if (provisioned_sim){
                                            console.log(`${msisdn} provisioned successfully E2E`);
+                                           total_provisioned++;
 
                                        }
 
@@ -84,9 +86,10 @@ sequelize.sync({
 
 
         }
-
+        console.log("\n Total provisioned sims: "+total_provisioned)
         fs.rename(fileInput, fileOutput, err => {
             if (err) throw err;
+
 
         })
     })
